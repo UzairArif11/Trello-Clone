@@ -1,0 +1,31 @@
+/* Column section */
+.column-container {
+    margin: 1rem;
+    border: 1px solid rgb(58, 9, 9);
+    border-radius: 5px;
+    width:100%;
+    display:flex;
+    flex-direction: column;
+    background-color:rgba(255, 255, 255, 0.973);
+    color: black;
+  }
+  
+  .task-title-edit-container {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+  
+  .column-title {
+    padding: 0 1rem;
+    margin: 1rem 0;
+    color: black;
+  }
+  
+  .task-list {
+    padding: 1rem;
+    min-height:100px;
+  }
+  /* End Column section */
