@@ -118,7 +118,7 @@ useEffect(() => {
             <div {...provided.droppableProps} ref={provided.innerRef} style={{display: "flex"}}>
               {data.columnOrder.map((colId, index) => {
                
-                // Replace this with the Column component later
+               
                 return <Column key={colId} colId={colId} index={index}/>
               })}
               {provided.placeholder}
