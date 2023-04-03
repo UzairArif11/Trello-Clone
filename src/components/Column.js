@@ -15,7 +15,7 @@ function Column({colId, index}) {
       <>
         {
           currColTasks.map((task, index) => {
-            // Replace this with the TaskCard component later
+            
             return <TaskCard key={task.id} currTaskColId={colId} task={task} index={index}/>
           })
         }

@@ -13,7 +13,7 @@ function Board () {
   const data = useSelector((state) => state.task);
   const dispatch = useDispatch();
 
-  function onDragEnd(result) {
+  function onDragEnds(result) {
     const { destination, source, draggableId, type } = result;
 
     //If there is no destination present
@@ -31,16 +31,16 @@ function Board () {
         const colOrderNew = Array.from(data.columnOrder);
         colOrderNew.splice(source.index, 1);
         colOrderNew.splice(destination.index, 0, draggableId);
-        
+      
         dispatch(dragColumns(colOrderNew))
         return;
-    }
-
+    } 
     const src = data.columns[source.droppableId];
     const dst = data.columns[destination.droppableId];
 
     // If a task is dropped inside the same column
     if (src === dst) {
+    
         const newTaskIds = Array.from(src.taskIds);
         newTaskIds.splice(source.index, 1);
         newTaskIds.splice(destination.index, 0, draggableId);
@@ -79,14 +79,15 @@ function Board () {
 
   return (
     <>
-      <div style={{textAlign: "center", color: "white"}}>
+      <div style={{textAlign: "center", color: "Black"}}>
         <h1>Tasks Management Board</h1>
       </div>
-      <DragDropContext onDragEnd={onDragEnd}>
+      <DragDropContext onDragEnd={onDragEnds}>
         <Droppable droppableId='all-columns' direction='horizontal' type='column'>
           {(provided) => (
             <div {...provided.droppableProps} ref={provided.innerRef} style={{display: "flex"}}>
               {data.columnOrder.map((colId, index) => {
+               
                 // Replace this with the Column component later
                 return <Column key={colId} colId={colId} index={index}/>
               })}
