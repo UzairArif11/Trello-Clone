@@ -1,12 +1,15 @@
 // Create the Board component here
 import React, { useEffect } from 'react'
 import { DragDropContext, Droppable } from 'react-beautiful-dnd'
-import dataset from './dataset'
+// import dataset from './dataset'
 import { useDispatch, useSelector } from 'react-redux';
 import { setAllTasks, setAllColumns, setColumnOrder } from './taskSlice';
 import { dragColumns, dragTasksDifferentColumn, dragTasksSameColumn } from './taskSlice';
 import Column from './Column'
 import EditTaskDialog from './EditTaskDialog'
+import TaskAddButton from './TaskAddButton';
+import {db} from '../firebase'
+import {collection, query, onSnapshot} from "firebase/firestore"
 
 function Board () {
   //  get data from the redux store
@@ -71,17 +74,44 @@ function Board () {
     }))
 }
 
-  useEffect(() => {
-    dispatch(setAllTasks({tasks: dataset["tasks"]})) // Initialize the tasks object in redux initial state
-    dispatch(setAllColumns({columns: dataset["columns"]})) // Initialize the columns object in redux initial state
-    dispatch(setColumnOrder({columnOrder: dataset["columnOrder"]})) // Initialize the columns order in redux initial state
-  }, [dispatch])
+useEffect(() => {
+  // Query Tasks from the databse
+  const queryTasks = query(collection(db, 'tasks'))
+  let tasks = [];
+  onSnapshot(queryTasks, (querySnapshot) => {
+      querySnapshot.docs.map(doc => (
+      tasks.push(doc.data())
+      ))
+      dispatch(setAllTasks(tasks))
+  })
+
+  // Query Columns from the databse
+  const queryColumns = query(collection(db, 'columns'))
+  let columns = [];
+  onSnapshot(queryColumns, (querySnapshot) => {
+      querySnapshot.docs.map(doc => (
+      columns.push(doc.data())
+      ))
+      dispatch(setAllColumns(columns))
+  })
+
+  // Query COlumn Order from the databse
+  const queryColumnOrder = query(collection(db, 'columnOrder'))
+  let columnOrder = [];
+  onSnapshot(queryColumnOrder, (querySnapshot) => {
+      querySnapshot.docs.map(doc => (
+      columnOrder = doc.data()
+      ))
+      dispatch(setColumnOrder(columnOrder))
+  })
+}, [dispatch])
 
   return (
     <>
       <div style={{textAlign: "center", color: "Black"}}>
         <h1>Tasks Management Board</h1>
       </div>
+      <div className='container'>
       <DragDropContext onDragEnd={onDragEnds}>
         <Droppable droppableId='all-columns' direction='horizontal' type='column'>
           {(provided) => (
@@ -96,7 +126,10 @@ function Board () {
           )}
         </Droppable>
       </DragDropContext>
-      
+      <div className='column-container' > <TaskAddButton  /></div>
+     
+     
+      </div>
       {
           data.isDialogOpen ?
           <EditTaskDialog taskId={data.currTaskIdToEdit} open={data.isDialogOpen} /> :

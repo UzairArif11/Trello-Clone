@@ -5,19 +5,24 @@ import { useDispatch } from 'react-redux';
 import AddIcon from '@mui/icons-material/Add';
 
 // Import reducer
-import { addNewTask } from './taskSlice';
+import { addNewTask , addNewColumn } from './taskSlice';
 
-function TaskAddButton({colId}) {
+function TaskAddButton(props) {
+  const colId = props.colId;
   const dispatch = useDispatch();
 
   function handleNewTask() {
     dispatch(addNewTask({colId: colId}));
   }
+  function handleNewColumn() {
+    dispatch(addNewColumn());
+    console.log('ok') 
+  }
 
   return (
     <div>
-      <button style={{ color: "white", backgroundColor: "#009D5E",fontSize: "20", borderRadius: "5px", border: "none", padding: "5px 10px 5px 5px", cursor: "pointer"}}
-      className='add-task-button' onClick={handleNewTask}>
+      <button style={{ color: "white", margin: '8px', backgroundColor: "#009D5E",fontSize: "20", borderRadius: "5px", border: "none", padding: "5px 10px 5px 5px", cursor: "pointer"}}
+      className='add-task-button' onClick={colId ? handleNewTask : handleNewColumn}>
         <div 
           style={{
             width: "100%",
@@ -27,7 +32,7 @@ function TaskAddButton({colId}) {
           }}
         >
           <AddIcon />
-          {"Add a card"}
+          {colId ? "Add a card" : "Add another List"}
         </div>
       </button>
     </div>
