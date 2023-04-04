@@ -52,15 +52,17 @@ export const taskSlice = createSlice({
   },
     dragColumns: (state, action) => {
       const columnOrderDocRef = doc(db, 'columnOrder', 'col-order')
-      updateDoc(columnOrderDocRef, {
+try{  updateDoc(columnOrderDocRef, {
         columnOrder: action.payload
       })
-
+   } catch (err) {
+        alert(err)
+    }
       state.columnOrder = action.payload;
     },
     dragTasksDifferentColumn: (state, action) => {
       let { srcColId, srcTaskIds, dstColId, dstTaskIds } = action.payload;
-
+try{
       const srcColDocRef = doc(db, 'columns', srcColId)
       updateDoc(srcColDocRef, {
         taskIds: srcTaskIds
@@ -70,18 +72,23 @@ export const taskSlice = createSlice({
       updateDoc(dstColDocRef, {
         taskIds: dstTaskIds
       })
-
+    } catch (err) {
+      alert(err)
+  }
       state.columns[srcColId].taskIds = srcTaskIds
       state.columns[dstColId].taskIds = dstTaskIds
     },
     dragTasksSameColumn: (state, action) => {
       const colId = action.payload.id
       const taskIds = action.payload.taskIds
-   
+   try{
       const colDocRef = doc(db, 'columns', colId)
       updateDoc(colDocRef, {
         taskIds: taskIds
       })
+    } catch (err) {
+      alert(err)
+  }
 
       state.columns[colId].taskIds = taskIds
     },
@@ -127,14 +134,11 @@ export const taskSlice = createSlice({
         taskDescription: ""
       }
 
-      // Append the new task id to the taskIds list of the particulat column
+      // Append the new task id to the taskIds list of the particular column
       state.columns[colId].taskIds.push(newTaskId)
     },
     addNewColumn: (state, action) => {
-   
-      
-    
-      let keys = Object.keys(state. columns).sort()
+       let keys = Object.keys(state.columns).sort()
       keys.sort((a, b) => a.replace(/[^\d]+/g, '') - b.replace(/[^\d]+/g, ''));
       
       // Get the id of the task present at the end of the tasks object 
@@ -145,34 +149,34 @@ export const taskSlice = createSlice({
 
       // set the integer id of the next task
       let nextId = parseInt(lastId.split("-")[1]) + 1
-      let newTaskId = " column-" + nextId.toString()
+      let newColumnId = " column-" + nextId.toString()
       
       
       try {
         // Add a new task to the "tasks" collection 
-        setDoc(doc(db, 'columns', newTaskId), {
-        id: newTaskId,
-        title: "New Task",
+        setDoc(doc(db, 'columns', newColumnId), {
+        id: newColumnId,
+        title: "New Card",
         taskIds: [] 
         })
         const colDocRef = doc(db, 'columnOrder','col-order')
 
         // Update the "columns" collection 
-        updateDoc(colDocRef, {columnOrder:arrayUnion(newTaskId)} 
+        updateDoc(colDocRef, {columnOrder:arrayUnion(newColumnId)} 
         )
     } catch (err) {
         alert(err)
     }
     
       // Add the new task in the tasks object of the initial state
-      state.columns[newTaskId] = {
-        id: newTaskId,
-        title: "New Task",
+      state.columns[newColumnId] = {
+        id: newColumnId,
+        title: "New Card",
         taskIds: [] 
       }
 
-      // Append the new task id to the taskIds list of the particulat column
-      state.columnOrder.push(newTaskId)
+      // Append the new task id to the taskIds list of the particular column
+      state.columnOrder.push(newColumnId)
     },
    
     updateTask: (state, action) => {
@@ -183,7 +187,7 @@ export const taskSlice = createSlice({
         taskTitle: taskTitle,
         taskDescription: taskDescription
       }
-   
+try{
       // update the data base only if the task title or task description changes
       if (state.tasks[id].taskTitle !== taskTitle || state.tasks[id].taskDescription !== taskDescription) {
         const taskDocRef = doc(db, 'tasks', id)
@@ -192,6 +196,9 @@ export const taskSlice = createSlice({
           taskDescription: taskDescription
         })
       }
+    } catch (err) {
+      alert(err)
+  }
       state.tasks[id] = updatedTask
     },
     updateColumn: (state, action) => {
@@ -203,7 +210,7 @@ export const taskSlice = createSlice({
         taskIds: state.columns[id].taskIds
        
       }
-   
+   try{
       // update the data base only if the task title or task description changes
       if (state.columns[id].title !== title ) {
         const DocRef = doc(db, 'columns', id)
@@ -212,12 +219,15 @@ export const taskSlice = createSlice({
           
         })
       }
+    } catch (err) {
+      alert(err)
+  }
       state.columns[id] = updatedColumn
     },
     deleteTask: (state, action) => {
       const taskId = action.payload.taskId;
       const colId = state.currColIdToEdit;
-
+try{
       // update the database
       // -- delete the task from the "tasks" collection of the database
       const taskDocRef = doc(db, 'tasks', taskId)
@@ -228,13 +238,16 @@ export const taskSlice = createSlice({
       updateDoc(colDocRef, {
         taskIds: arrayRemove(taskId)
       })
-
+    } catch (err) {
+      alert(err)
+  }
       // update the redux state
       state.columns[colId].taskIds = state.columns[colId].taskIds.filter(item => item !== taskId)
       delete state.tasks[taskId];
     },
     deleteColumn: (state, action) => {
       const colId = action.payload.id;
+      try{
       const colDocRef = doc(db, 'columns', colId)
       deleteDoc(colDocRef)
     
@@ -243,7 +256,9 @@ export const taskSlice = createSlice({
       updateDoc(colOdrDocRef, {
         columnOrder: arrayRemove(colId)
       })
-    
+    } catch (err) {
+      alert(err)
+  }
       // Update the redux state
       state.columnOrder = state.columnOrder.filter(item => item !== colId)
       delete state.columns[colId]

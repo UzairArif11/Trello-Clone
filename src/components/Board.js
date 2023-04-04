@@ -131,9 +131,9 @@ useEffect(() => {
      
       </div>
       {
-          data.isDialogOpen ?
-          <EditTaskDialog taskId={data.currTaskIdToEdit} open={data.isDialogOpen} /> :
-          null
+          data.isDialogOpen &&
+          <EditTaskDialog taskId={data.currTaskIdToEdit} open={data.isDialogOpen} /> 
+          
       }
     </>
   )
