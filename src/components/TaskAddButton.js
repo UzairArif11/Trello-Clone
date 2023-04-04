@@ -16,7 +16,7 @@ function TaskAddButton(props) {
   }
   function handleNewColumn() {
     dispatch(addNewColumn());
-    console.log('ok') 
+  
   }
 
   return (
